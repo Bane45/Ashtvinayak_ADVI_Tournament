@@ -2,314 +2,261 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Knockout Cricket Tournament</title>
+<title>Cricket Knockout Tournament</title>
 
 <style>
-body{font-family:Segoe UI;margin:0;background:#eef2f7}
-header{background:#0d6efd;color:white;padding:15px;text-align:center;font-size:22px;font-weight:bold}
-nav{display:flex;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-nav button{flex:1;padding:12px;border:none;background:white;font-size:16px;cursor:pointer}
-nav button:hover{background:#e9ecef}
-.container{max-width:1100px;margin:auto;padding:20px}
-.card{background:white;padding:20px;margin-bottom:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.hidden{display:none}
-.score{font-size:32px;font-weight:bold;color:#0d6efd}
-.score-btn{padding:14px;margin:4px;font-size:18px;width:60px}
-input,select{width:100%;padding:8px;margin:6px 0}
-button.primary{background:#0d6efd;color:white;border:none;padding:10px;border-radius:6px;cursor:pointer}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #ddd;padding:8px;text-align:center}
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+header{
+background:#1e293b;
+padding:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+}
+
+nav{
+display:flex;
+background:#334155;
+}
+
+nav button{
+flex:1;
+padding:12px;
+border:none;
+background:#334155;
+color:white;
+cursor:pointer;
+font-size:15px;
+}
+
+nav button:hover{
+background:#475569;
+}
+
+section{
+display:none;
+padding:20px;
+}
+
+.active{
+display:block;
+}
+
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:8px;
+margin-bottom:15px;
+}
+
+input,select{
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+
+button.action{
+background:#22c55e;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
+color:white;
+}
+
+h3{
+margin-top:0;
+}
 </style>
 </head>
 
 <body>
 
-<header>Knockout Cricket Tournament</header>
+<header>🏏 Cricket Knockout Tournament</header>
 
 <nav>
-<button onclick="page('teams')">Teams</button>
-<button onclick="page('setup')">Match Setup</button>
-<button onclick="page('live')">Live Match</button>
-<button onclick="page('points')">Points</button>
+<button onclick="show('teams')">Teams</button>
+<button onclick="show('match')">Match Setup</button>
+<button onclick="show('score')">Scorebook</button>
+<button onclick="show('knockout')">Knockout</button>
+<button onclick="show('results')">Results</button>
 </nav>
 
-<div class="container">
+<!-- TEAM REGISTER -->
+<section id="teams" class="active">
+<div class="card">
+<h3>Register Team</h3>
+<input id="teamName" placeholder="Team name">
+<button class="action" onclick="addTeam()">Add Team</button>
+</div>
 
-<!-- TEAM PAGE -->
-<div id="teams" class="card">
-<h2>Register Teams</h2>
-<input id="teamInput" placeholder="Team name">
-<button class="primary" onclick="addTeam()">Add Team</button>
-<button class="primary" onclick="generateKnockout()">Generate Knockout</button>
+<div class="card">
+<h3>Teams</h3>
 <ul id="teamList"></ul>
 </div>
+</section>
 
 <!-- MATCH SETUP -->
-<div id="setup" class="card hidden">
-<h2>Match Setup</h2>
+<section id="match">
+<div class="card">
+<h3>Create Match</h3>
 
-<label>Striker</label>
-<input id="s1">
+<select id="teamA"></select>
+<select id="teamB"></select>
 
-<label>Non Striker</label>
-<input id="s2">
+<br>
 
-<label>Opening Bowler</label>
-<input id="bowler">
+<input id="batsman1" placeholder="Batsman 1">
+<input id="batsman2" placeholder="Batsman 2">
+<input id="bowler" placeholder="Bowler">
 
-<button class="primary" onclick="startMatch()">Start Match</button>
+<br>
 
-<h3 id="matchInfo"></h3>
+<button class="action" onclick="startMatch()">Start Match</button>
 </div>
+</section>
 
-<!-- LIVE MATCH -->
-<div id="live" class="card hidden">
+<!-- SCOREBOOK -->
+<section id="score">
+<div class="card">
+<h3>Score Entry (Manual)</h3>
 
-<h2 id="roundTitle"></h2>
-<h3 id="inningsTitle"></h3>
-<div class="score" id="score">0/0 (0.0)</div>
-<div id="target"></div>
-<p id="players"></p>
+<p id="matchInfo"></p>
 
-<button class="score-btn" onclick="ball(0)">0</button>
-<button class="score-btn" onclick="ball(1)">1</button>
-<button class="score-btn" onclick="ball(2)">2</button>
-<button class="score-btn" onclick="ball(3)">3</button>
-<button class="score-btn" onclick="ball(4)">4</button>
-<button class="score-btn" onclick="ball(6)">6</button>
-<button class="score-btn" onclick="wicket()">W</button>
+Team A Score <input id="scoreA" type="number">
+Team B Score <input id="scoreB" type="number">
 
 <br><br>
 
-<button class="primary" onclick="changeBowler()">Change Bowler</button>
-<button class="primary" onclick="endOver()">End Over</button>
-<button class="primary" onclick="endInnings()">End Innings</button>
+Batsman 1 Runs <input id="runs1" type="number">
+Batsman 2 Runs <input id="runs2" type="number">
+Bowler Wickets <input id="wkts" type="number">
 
-</div>
+<br><br>
 
-<!-- POINTS -->
-<div id="points" class="card hidden">
-<h2>Points Table</h2>
-<table>
-<thead><tr><th>Team</th><th>Wins</th></tr></thead>
-<tbody id="pointsTable"></tbody>
-</table>
-<h2 id="winnerText"></h2>
-</div>
+Man of Match <input id="mom">
+Best Batsman <input id="bestBat">
+Best Bowler <input id="bestBowl">
 
+<br><br>
+
+<button class="action" onclick="finishMatch()">Finish Match</button>
 </div>
+</section>
+
+<!-- KNOCKOUT -->
+<section id="knockout">
+<div class="card">
+<h3>Knockout Progress</h3>
+<div id="knockoutView"></div>
+</div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+<div class="card">
+<h3>Match Results</h3>
+<div id="resultsList"></div>
+</div>
+</section>
 
 <script>
 
-function page(p){
-["teams","setup","live","points"].forEach(x=>document.getElementById(x).classList.add("hidden"))
-document.getElementById(p).classList.remove("hidden")
+let teams=JSON.parse(localStorage.getItem("teams"))||[]
+let matches=JSON.parse(localStorage.getItem("matches"))||[]
+let currentMatch=null
+let knockout=JSON.parse(localStorage.getItem("knockout"))||[]
+
+function save(){
+localStorage.setItem("teams",JSON.stringify(teams))
+localStorage.setItem("matches",JSON.stringify(matches))
+localStorage.setItem("knockout",JSON.stringify(knockout))
 }
 
-let teams=[]
-let points={}
-let knockoutMatches=[]
-let currentMatch=0
-
-let innings=1
-let target=0
-
-let match={
-batting:"",
-bowling:"",
-striker:"",
-nonStriker:"",
-bowler:""
+function show(id){
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"))
+document.getElementById(id).classList.add("active")
+render()
 }
-
-let score=0
-let wickets=0
-let balls=0
-let overs=0
 
 function addTeam(){
-let t=teamInput.value.trim()
-if(!t) return
-teams.push(t)
-points[t]=points[t]||0
-renderTeams()
+let name=document.getElementById("teamName").value
+if(!name)return
+teams.push(name)
+document.getElementById("teamName").value=""
+save()
+render()
 }
 
-function renderTeams(){
-teamList.innerHTML=teams.map(t=>"<li>"+t+"</li>").join("")
-}
+function render(){
+document.getElementById("teamList").innerHTML=
+teams.map(t=>"<li>"+t+"</li>").join("")
 
-function generateKnockout(){
+document.getElementById("teamA").innerHTML=
+teams.map(t=>"<option>"+t+"</option>").join("")
+document.getElementById("teamB").innerHTML=
+teams.map(t=>"<option>"+t+"</option>").join("")
 
-if(teams.length<2){alert("Need teams");return}
+document.getElementById("resultsList").innerHTML=
+matches.map(m=>`
+<div class="card">
+${m.a} ${m.sa} vs ${m.b} ${m.sb}
+<br>Winner: ${m.winner}
+<br>MOM: ${m.mom}
+</div>`).join("")
 
-knockoutMatches=[]
-let roundTeams=[...teams]
-
-while(roundTeams.length>1){
-
-let roundName =
-roundTeams.length==2?"FINAL":
-roundTeams.length<=4?"SEMI FINAL":
-roundTeams.length<=8?"QUARTER FINAL":"ROUND"
-
-let next=[]
-
-for(let i=0;i<roundTeams.length;i+=2){
-let A=roundTeams[i]
-let B=roundTeams[i+1]||"BYE"
-knockoutMatches.push({round:roundName,teamA:A,teamB:B,winner:""})
-next.push("TBD")
-}
-
-roundTeams=next
-}
-
-currentMatch=0
-showNextMatch()
-page("setup")
-}
-
-function showNextMatch(){
-
-let m=knockoutMatches[currentMatch]
-
-match.batting=m.teamA
-match.bowling=m.teamB
-
-roundTitle.innerText=m.round+" : "+m.teamA+" vs "+m.teamB
-matchInfo.innerText=m.teamA+" vs "+m.teamB
+document.getElementById("knockoutView").innerHTML=
+knockout.map((t,i)=>"Match "+(i+1)+": "+t).join("<br>")
 }
 
 function startMatch(){
-
-match.striker=s1.value
-match.nonStriker=s2.value
-match.bowler=bowler.value
-
-resetScore()
-updateUI()
-page("live")
+currentMatch={
+a:teamA.value,
+b:teamB.value,
+bat1:batsman1.value,
+bat2:batsman2.value,
+bowler:bowler.value
 }
 
-function resetScore(){
-score=0
-wickets=0
-balls=0
-overs=0
-}
+matchInfo.innerText=
+currentMatch.a+" vs "+currentMatch.b+
+" | "+currentMatch.bat1+" & "+currentMatch.bat2+
+" vs "+currentMatch.bowler
 
-function ball(r){
-score+=r
-balls++
-if(r%2==1) swapStrike()
-if(balls==6) endOver()
-checkChase()
-updateUI()
-}
-
-function wicket(){
-wickets++
-balls++
-match.striker=prompt("New batsman")
-updateUI()
-}
-
-function swapStrike(){
-let t=match.striker
-match.striker=match.nonStriker
-match.nonStriker=t
-}
-
-function endOver(){
-overs++
-balls=0
-swapStrike()
-changeBowler()
-updateUI()
-}
-
-function changeBowler(){
-match.bowler=prompt("New bowler")
-}
-
-function endInnings(){
-
-if(innings==1){
-target=score+1
-innings=2
-
-let temp=match.batting
-match.batting=match.bowling
-match.bowling=temp
-
-match.striker=prompt("New striker")
-match.nonStriker=prompt("New non striker")
-match.bowler=prompt("New bowler")
-
-resetScore()
-updateUI()
-return
-}
-
-finishMatch()
-}
-
-function checkChase(){
-if(innings==2 && score>=target) finishMatch()
+show("score")
 }
 
 function finishMatch(){
 
-let winner = score>=target ? match.batting : match.bowling
+currentMatch.sa=scoreA.value
+currentMatch.sb=scoreB.value
+currentMatch.r1=runs1.value
+currentMatch.r2=runs2.value
+currentMatch.w=wkts.value
+currentMatch.mom=mom.value
+currentMatch.bestBat=bestBat.value
+currentMatch.bestBowl=bestBowl.value
 
-points[winner]++
-knockoutMatches[currentMatch].winner=winner
+currentMatch.winner =
+currentMatch.sa>currentMatch.sb ? currentMatch.a : currentMatch.b
 
-renderPoints()
+matches.push(currentMatch)
+knockout.push(currentMatch.winner)
 
-alert("Winner: "+winner)
-
-advanceKnockout(winner)
-page("points")
+save()
+render()
+alert("Winner: "+currentMatch.winner)
+show("knockout")
 }
 
-function advanceKnockout(winner){
-
-for(let i=currentMatch+1;i<knockoutMatches.length;i++){
-if(knockoutMatches[i].teamA=="TBD"){knockoutMatches[i].teamA=winner;break}
-if(knockoutMatches[i].teamB=="TBD"){knockoutMatches[i].teamB=winner;break}
-}
-
-currentMatch++
-
-if(currentMatch>=knockoutMatches.length){
-winnerText.innerText="🏆 Champion: "+winner
-}else{
-alert("Next Match Ready")
-innings=1
-showNextMatch()
-}
-}
-
-function renderPoints(){
-pointsTable.innerHTML=
-Object.entries(points).map(([t,w])=>`<tr><td>${t}</td><td>${w}</td></tr>`).join("")
-}
-
-function updateUI(){
-
-inningsTitle.innerText="INNINGS "+innings+" | "+match.batting+" batting"
-
-score.innerText=score+"/"+wickets+" ("+overs+"."+balls+")"
-
-players.innerText=
-"Striker: "+match.striker+
-" | Non striker: "+match.nonStriker+
-" | Bowler: "+match.bowler
-
-target.innerText=innings==2?"Target: "+target:""
-}
+render()
 
 </script>
 </body>
