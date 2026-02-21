@@ -1,287 +1,243 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ashtvinayak Adavali Cricket Tournament</title>
+<title>Cricket Tournament Manager</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f5f6fa}
-header{background:#0b5ed7;color:white;padding:15px;text-align:center}
-.container{max-width:1200px;margin:auto;padding:20px}
-.card{background:white;padding:15px;margin-bottom:20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-input,select,button{padding:8px;margin:5px 0;width:100%}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #ddd;padding:8px;text-align:center}
-button{background:#0b5ed7;color:white;border:none;border-radius:5px;cursor:pointer}
-button:hover{background:#094db3}
-.badge-paid{color:green;font-weight:bold}
-.badge-pending{color:red;font-weight:bold}
-.winner{color:green;font-weight:bold}
-.delete-btn{background:#dc3545}
-.award{font-size:18px;font-weight:bold;color:#198754;margin:5px 0}
-.next-match{font-size:20px;font-weight:bold;color:#0b5ed7;text-align:center}
-.live-btns button{width:auto;margin:3px;padding:10px 15px}
-.wicket{background:red}
+body{
+  font-family: Arial;
+  padding:20px;
+}
+
+.page{
+  display:none;
+}
+
+button{
+  padding:10px;
+  margin:5px;
+  font-size:16px;
+}
+
+.runs button{
+  width:60px;
+  height:60px;
+  font-size:20px;
+}
+
+.menu button{
+  font-size:18px;
+  display:block;
+  margin:10px 0;
+}
 </style>
+
 </head>
 
 <body>
 
-<header>
-<h1>Ashtvinayak Adavali Cricket Tournament</h1>
-<p>Entry Fee ₹1000 | Knockout Format</p>
-</header>
+<h1>Cricket Tournament Manager</h1>
 
-<div class="container">
+<!-- ================= MENU ================= -->
+<div class="menu">
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('teams')">Register Teams</button>
+<button onclick="showPage('match')">Create Match</button>
+<button onclick="showPage('live')">Live Scoring</button>
+<button onclick="showPage('summary')">Match Summary</button>
+</div>
 
-<!-- REGISTER TEAM -->
-<div class="card">
+<hr>
+
+<!-- ================= HOME ================= -->
+<div id="home" class="page">
+<h2>Welcome</h2>
+<p>Use menu to manage tournament</p>
+</div>
+
+<!-- ================= TEAM REG ================= -->
+<div id="teams" class="page">
 <h2>Register Team</h2>
-<input id="teamName" placeholder="Team Name">
-<input id="captain" placeholder="Captain Name">
-<input id="phone" placeholder="WhatsApp Number">
-<select id="payment">
-<option value="Pending">Payment Pending</option>
-<option value="Paid">Payment Paid</option>
-</select>
-<button onclick="addTeam()">Register Team</button>
+
+<input id="teamName" placeholder="Team name">
+<button onclick="addTeam()">Add Team</button>
+
+<h3>Registered Teams</h3>
+<ul id="teamList"></ul>
 </div>
 
-<!-- TEAM TABLE -->
-<div class="card">
-<h2>Registered Teams</h2>
-<table>
-<thead>
-<tr><th>Team</th><th>Captain</th><th>Phone</th><th>Payment</th><th>Actions</th></tr>
-</thead>
-<tbody id="teamTable"></tbody>
-</table>
+<!-- ================= CREATE MATCH ================= -->
+<div id="match" class="page">
+<h2>Create Match</h2>
+
+<label>Team 1</label><br>
+<select id="team1"></select><br><br>
+
+<label>Team 2</label><br>
+<select id="team2"></select><br><br>
+
+<button onclick="createMatch()">Start Match</button>
 </div>
 
-<!-- GENERATE BRACKET -->
-<div class="card">
-<h2>Generate Knockout Bracket</h2>
-<button onclick="generateBracket()">Generate Bracket</button>
+<!-- ================= LIVE SCORING ================= -->
+<div id="live" class="page">
+<h2>Live Scoring</h2>
+
+<h3 id="matchTeams"></h3>
+
+<input id="striker" placeholder="Striker name">
+
+<div class="runs">
+<button onclick="run(0)">0</button>
+<button onclick="run(1)">1</button>
+<button onclick="run(2)">2</button>
+<button onclick="run(3)">3</button>
+<button onclick="run(4)">4</button>
+<button onclick="run(6)">6</button>
+<button onclick="wicket()">W</button>
 </div>
 
-<!-- MATCHES -->
-<div class="card">
-<h2>Matches & Score</h2>
-<table>
-<thead>
-<tr>
-<th>Round</th><th>Team A</th><th>Team B</th>
-<th>Score A</th><th>Score B</th><th>Winner</th><th>Action</th>
-</tr>
-</thead>
-<tbody id="matchTable"></tbody>
-</table>
+<h3 id="score"></h3>
+<h4 id="balls"></h4>
+
+<button onclick="endOver()">End Over</button>
 </div>
 
-<!-- LIVE SCORING -->
-<div class="card">
-<h2>Live Ball by Ball Scoring</h2>
-
-<select id="liveMatchSelect"></select>
-<input id="striker" placeholder="Striker">
-<input id="nonStriker" placeholder="Non Striker">
-<input id="bowler" placeholder="Bowler">
-
-<div class="live-btns">
-<button onclick="addRun(0)">0</button>
-<button onclick="addRun(1)">1</button>
-<button onclick="addRun(2)">2</button>
-<button onclick="addRun(3)">3</button>
-<button onclick="addRun(4)">FOUR</button>
-<button onclick="addRun(6)">SIX</button>
-<button class="wicket" onclick="addWicket()">WICKET</button>
+<!-- ================= SUMMARY ================= -->
+<div id="summary" class="page">
+<h2>Match Summary</h2>
+<div id="summaryData"></div>
 </div>
 
-<h3>Batsmen</h3>
-<div id="liveBatsmen"></div>
-
-<h3>Bowler</h3>
-<div id="liveBowler"></div>
-</div>
-
-<!-- PLAYER STATS -->
-<div class="card">
-<h2>Player Statistics</h2>
-<table>
-<thead>
-<tr><th>Player</th><th>Team</th><th>Runs</th><th>Wickets</th><th>MOM</th></tr>
-</thead>
-<tbody id="playerStatsTable"></tbody>
-</table>
-</div>
-
-<!-- AWARDS -->
-<div class="card">
-<h2>Tournament Awards</h2>
-<div id="bestBatsman" class="award"></div>
-<div id="bestBowler" class="award"></div>
-<div id="mostMOM" class="award"></div>
-</div>
-
-<!-- NEXT MATCH -->
-<div class="card">
-<h2>Next Match</h2>
-<div id="nextMatch" class="next-match"></div>
-</div>
-
-<!-- LEADERBOARD -->
-<div class="card">
-<h2>Leaderboard</h2>
-<table>
-<thead><tr><th>Team</th><th>Wins</th></tr></thead>
-<tbody id="leaderboard"></tbody>
-</table>
-</div>
-
-</div>
 
 <script>
 
-/* STORAGE */
-let teams=JSON.parse(localStorage.getItem('teams'))||[];
-let matches=JSON.parse(localStorage.getItem('matches'))||[];
-let stats=JSON.parse(localStorage.getItem('stats'))||{};
-let playerStats=JSON.parse(localStorage.getItem('playerStats'))||{};
-let liveMatches=JSON.parse(localStorage.getItem('liveMatches'))||{};
+showPage("home")
 
-function save(){
-localStorage.setItem('teams',JSON.stringify(teams));
-localStorage.setItem('matches',JSON.stringify(matches));
-localStorage.setItem('stats',JSON.stringify(stats));
-localStorage.setItem('playerStats',JSON.stringify(playerStats));
-localStorage.setItem('liveMatches',JSON.stringify(liveMatches));
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none")
+  document.getElementById(id).style.display="block"
+
+  if(id==="teams") loadTeams()
+  if(id==="match") loadTeamDropdowns()
+  if(id==="live") loadMatch()
+  if(id==="summary") showSummary()
 }
 
-/* TEAM */
+
+/* ================= TEAM STORAGE ================= */
+
 function addTeam(){
-let name=teamName.value.trim();
-if(!name)return;
-teams.push({name});
-stats[name]=0;
-save();renderTeams();renderLeaderboard();
+  const name=document.getElementById("teamName").value
+  if(!name) return
+
+  let teams=JSON.parse(localStorage.getItem("teams"))||[]
+  teams.push(name)
+  localStorage.setItem("teams",JSON.stringify(teams))
+  document.getElementById("teamName").value=""
+  loadTeams()
 }
 
-function renderTeams(){
-teamTable.innerHTML=teams.map((t,i)=>`
-<tr>
-<td>${t.name}</td>
-<td><button onclick="deleteTeam(${i})">Delete</button></td>
-</tr>`).join('');
+function loadTeams(){
+  const list=document.getElementById("teamList")
+  if(!list) return
+
+  let teams=JSON.parse(localStorage.getItem("teams"))||[]
+  list.innerHTML=""
+
+  teams.forEach(t=>{
+    let li=document.createElement("li")
+    li.innerText=t
+    list.appendChild(li)
+  })
 }
 
-function deleteTeam(i){
-teams.splice(i,1);
-save();renderTeams();
+function loadTeamDropdowns(){
+  team1.innerHTML=""
+  team2.innerHTML=""
+
+  let teams=JSON.parse(localStorage.getItem("teams"))||[]
+
+  teams.forEach(t=>{
+    team1.add(new Option(t,t))
+    team2.add(new Option(t,t))
+  })
 }
 
-/* BRACKET */
-function generateBracket(){
-matches=[];
-let current=teams.map(t=>t.name);
-let round=1;
 
-while(current.length>1){
-let next=[];
-for(let i=0;i<current.length;i+=2){
-let a=current[i];
-let b=current[i+1]||"BYE";
-matches.push({round:'R'+round,teamA:a,teamB:b,winner:''});
-next.push("TBD");
-}
-current=next;round++;
-}
-save();renderMatches();loadLiveMatchOptions();
-}
+/* ================= MATCH CREATE ================= */
 
-/* MATCH RENDER */
-function renderMatches(){
-matchTable.innerHTML=matches.map((m,i)=>`
-<tr>
-<td>${m.round}</td>
-<td>${m.teamA}</td>
-<td>${m.teamB}</td>
-<td></td><td></td>
-<td>${m.winner||'-'}</td>
-<td>
-<button onclick="setWinner(${i},'${m.teamA}')">${m.teamA}</button>
-<button onclick="setWinner(${i},'${m.teamB}')">${m.teamB}</button>
-</td>
-</tr>`).join('');
+function createMatch(){
+
+  const match={
+    team1:team1.value,
+    team2:team2.value,
+    score:0,
+    wickets:0,
+    balls:[],
+    overs:0
+  }
+
+  localStorage.setItem("match",JSON.stringify(match))
+  alert("Match Created. Go to Live Scoring")
 }
 
-/* LIVE SCORING */
-function loadLiveMatchOptions(){
-liveMatchSelect.innerHTML='<option value="">Select Match</option>'+
-matches.map((m,i)=>`<option value="${i}">${m.teamA} vs ${m.teamB}</option>`).join('');
+
+/* ================= LIVE SCORING ================= */
+
+let matchData
+
+function loadMatch(){
+  matchData=JSON.parse(localStorage.getItem("match"))
+
+  if(!matchData){
+    alert("Create match first")
+    return
+  }
+
+  matchTeams.innerText=matchData.team1+" vs "+matchData.team2
+  updateScore()
 }
 
-function getMatch(){
-let i=liveMatchSelect.value;
-if(i==="")return null;
-if(!liveMatches[i])liveMatches[i]={batsmen:{},bowler:null};
-return liveMatches[i];
+function run(r){
+  matchData.score+=r
+  matchData.balls.push(r)
+  updateScore()
 }
 
-function ensurePlayers(){
-let m=getMatch(); if(!m)return alert("Select match");
-let s=striker.value.trim();
-let b=bowler.value.trim();
-if(!s||!b)return alert("Enter striker & bowler");
-if(!m.batsmen[s])m.batsmen[s]={runs:0,balls:0,fours:0,sixes:0};
-if(!m.bowler||m.bowler.name!==b)
-m.bowler={name:b,balls:0,runs:0,wickets:0};
-return m;
+function wicket(){
+  matchData.wickets++
+  matchData.balls.push("W")
+  updateScore()
 }
 
-function addRun(r){
-let m=ensurePlayers(); if(!m)return;
-let s=striker.value.trim();
-let p=m.batsmen[s];
-p.runs+=r; p.balls++;
-if(r==4)p.fours++;
-if(r==6)p.sixes++;
-m.bowler.balls++;
-m.bowler.runs+=r;
-save();renderLive();
+function updateScore(){
+  score.innerText="Score: "+matchData.score+"/"+matchData.wickets
+  balls.innerText="This Over: "+matchData.balls.join(" , ")
+  localStorage.setItem("match",JSON.stringify(matchData))
 }
 
-function addWicket(){
-let m=ensurePlayers(); if(!m)return;
-let s=striker.value.trim();
-m.batsmen[s].balls++;
-m.bowler.balls++;
-m.bowler.wickets++;
-save();renderLive();
+function endOver(){
+  matchData.overs++
+  matchData.balls=[]
+  updateScore()
 }
 
-function renderLive(){
-let m=getMatch(); if(!m)return;
-liveBatsmen.innerHTML=Object.entries(m.batsmen)
-.map(([n,p])=>`${n} ${p.runs}(${p.balls}) 4s:${p.fours} 6s:${p.sixes}`).join("<br>");
-let b=m.bowler;
-if(!b)return;
-liveBowler.innerHTML=
-`${b.name} Overs:${(b.balls/6).toFixed(1)} Runs:${b.runs} Wkts:${b.wickets}`;
+
+/* ================= SUMMARY ================= */
+
+function showSummary(){
+  const m=JSON.parse(localStorage.getItem("match"))
+  if(!m) return
+
+  summaryData.innerHTML=
+    "Match: "+m.team1+" vs "+m.team2+
+    "<br>Total Score: "+m.score+
+    "<br>Wickets: "+m.wickets+
+    "<br>Overs: "+m.overs
 }
-
-liveMatchSelect.onchange=renderLive;
-
-/* LEADERBOARD */
-function renderLeaderboard(){
-leaderboard.innerHTML=Object.entries(stats)
-.map(([t,w])=>`<tr><td>${t}</td><td>${w}</td></tr>`).join('');
-}
-
-renderTeams();
-renderMatches();
-loadLiveMatchOptions();
 
 </script>
+
 </body>
 </html>
