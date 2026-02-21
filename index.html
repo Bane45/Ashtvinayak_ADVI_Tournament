@@ -1,33 +1,42 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ashtvinayak Adavali Cricket Tournament</title>
+
 <style>
-body{font-family:Arial, sans-serif;margin:0;background:#f5f6fa}
+body{font-family:Arial;margin:0;background:#f5f6fa}
 header{background:#0b5ed7;color:white;padding:15px;text-align:center}
 .container{max-width:1200px;margin:auto;padding:20px}
 .card{background:white;padding:15px;margin-bottom:20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-h2{margin-top:0}
-input,select,button{padding:8px;margin:5px 0;width:100%;box-sizing:border-box}
+input,select,button{padding:8px;margin:5px 0;width:100%}
 table{width:100%;border-collapse:collapse}
 th,td{border:1px solid #ddd;padding:8px;text-align:center}
-th{background:#eee}
 button{background:#0b5ed7;color:white;border:none;border-radius:5px;cursor:pointer}
 button:hover{background:#094db3}
 .badge-paid{color:green;font-weight:bold}
 .badge-pending{color:red;font-weight:bold}
-.next-match{font-size:20px;font-weight:bold;color:#0b5ed7;text-align:center}
 .winner{color:green;font-weight:bold}
 .delete-btn{background:#dc3545}
-.delete-btn:hover{background:#b02a37}
 .award{font-size:18px;font-weight:bold;color:#198754;margin:5px 0}
+.next-match{font-size:20px;font-weight:bold;color:#0b5ed7;text-align:center}
+.live-btns button{width:auto;margin:3px;padding:10px 15px}
+.wicket{background:red}
 </style>
 </head>
-<body><header>
+
+<body>
+
+<header>
 <h1>Ashtvinayak Adavali Cricket Tournament</h1>
 <p>Entry Fee ₹1000 | Knockout Format</p>
-</header><div class="container"><!-- REGISTER TEAM --><div class="card">
+</header>
+
+<div class="container">
+
+<!-- REGISTER TEAM -->
+<div class="card">
 <h2>Register Team</h2>
 <input id="teamName" placeholder="Team Name">
 <input id="captain" placeholder="Captain Name">
@@ -37,281 +46,242 @@ button:hover{background:#094db3}
 <option value="Paid">Payment Paid</option>
 </select>
 <button onclick="addTeam()">Register Team</button>
-</div><!-- TEAM TABLE --><div class="card">
-<h2>Registered Teams & Payment</h2>
+</div>
+
+<!-- TEAM TABLE -->
+<div class="card">
+<h2>Registered Teams</h2>
 <table>
-<thead><tr><th>Team</th><th>Captain</th><th>Phone</th><th>Payment</th><th>Actions</th></tr></thead>
+<thead>
+<tr><th>Team</th><th>Captain</th><th>Phone</th><th>Payment</th><th>Actions</th></tr>
+</thead>
 <tbody id="teamTable"></tbody>
 </table>
-</div><!-- FIXTURE GENERATION --><div class="card">
+</div>
+
+<!-- GENERATE BRACKET -->
+<div class="card">
 <h2>Generate Knockout Bracket</h2>
-<p>You can generate bracket with ANY number of teams (minimum 2).</p>
 <button onclick="generateBracket()">Generate Bracket</button>
-</div><!-- MATCHES --><div class="card">
-<h2>Matches & Live Score</h2>
+</div>
+
+<!-- MATCHES -->
+<div class="card">
+<h2>Matches & Score</h2>
 <table>
 <thead>
 <tr>
-<th>Round</th>
-<th>Team A</th>
-<th>Team B</th>
-<th>Score A</th>
-<th>Score B</th>
-<th>Winner</th>
-<th>Actions</th>
+<th>Round</th><th>Team A</th><th>Team B</th>
+<th>Score A</th><th>Score B</th><th>Winner</th><th>Action</th>
 </tr>
 </thead>
 <tbody id="matchTable"></tbody>
 </table>
-</div><!-- PLAYER PERFORMANCE ENTRY --><div class="card">
-<h2>Enter Player Match Performance</h2>
-<input id="playerName" placeholder="Player Name">
-<input id="playerTeam" placeholder="Team Name">
-<input id="runs" type="number" placeholder="Runs Scored">
-<input id="wickets" type="number" placeholder="Wickets Taken">
-<select id="mom">
-<option value="no">Man of the Match - No</option>
-<option value="yes">Man of the Match - Yes</option>
-</select>
-<button onclick="addPlayerPerformance()">Add Performance</button>
-</div><!-- PLAYER STATS TABLE --><div class="card">
+</div>
+
+<!-- LIVE SCORING -->
+<div class="card">
+<h2>Live Ball by Ball Scoring</h2>
+
+<select id="liveMatchSelect"></select>
+<input id="striker" placeholder="Striker">
+<input id="nonStriker" placeholder="Non Striker">
+<input id="bowler" placeholder="Bowler">
+
+<div class="live-btns">
+<button onclick="addRun(0)">0</button>
+<button onclick="addRun(1)">1</button>
+<button onclick="addRun(2)">2</button>
+<button onclick="addRun(3)">3</button>
+<button onclick="addRun(4)">FOUR</button>
+<button onclick="addRun(6)">SIX</button>
+<button class="wicket" onclick="addWicket()">WICKET</button>
+</div>
+
+<h3>Batsmen</h3>
+<div id="liveBatsmen"></div>
+
+<h3>Bowler</h3>
+<div id="liveBowler"></div>
+</div>
+
+<!-- PLAYER STATS -->
+<div class="card">
 <h2>Player Statistics</h2>
 <table>
 <thead>
-<tr>
-<th>Player</th>
-<th>Team</th>
-<th>Total Runs</th>
-<th>Total Wickets</th>
-<th>MOM Awards</th>
-</tr>
+<tr><th>Player</th><th>Team</th><th>Runs</th><th>Wickets</th><th>MOM</th></tr>
 </thead>
 <tbody id="playerStatsTable"></tbody>
 </table>
-</div><!-- AWARDS --><div class="card">
+</div>
+
+<!-- AWARDS -->
+<div class="card">
 <h2>Tournament Awards</h2>
 <div id="bestBatsman" class="award"></div>
 <div id="bestBowler" class="award"></div>
 <div id="mostMOM" class="award"></div>
-</div><!-- NEXT MATCH --><div class="card">
+</div>
+
+<!-- NEXT MATCH -->
+<div class="card">
 <h2>Next Match</h2>
-<div id="nextMatch" class="next-match">Not Scheduled</div>
-</div><!-- LEADERBOARD --><div class="card">
-<h2>Leaderboard (Wins)</h2>
+<div id="nextMatch" class="next-match"></div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="card">
+<h2>Leaderboard</h2>
 <table>
 <thead><tr><th>Team</th><th>Wins</th></tr></thead>
 <tbody id="leaderboard"></tbody>
 </table>
-</div></div><script>
-let teams = JSON.parse(localStorage.getItem('teams')) || [];
-let matches = JSON.parse(localStorage.getItem('matches')) || [];
-let stats = JSON.parse(localStorage.getItem('stats')) || {};
-let playerStats = JSON.parse(localStorage.getItem('playerStats')) || {};
-let roundStarts = JSON.parse(localStorage.getItem('roundStarts')) || [];
+</div>
+
+</div>
+
+<script>
+
+/* STORAGE */
+let teams=JSON.parse(localStorage.getItem('teams'))||[];
+let matches=JSON.parse(localStorage.getItem('matches'))||[];
+let stats=JSON.parse(localStorage.getItem('stats'))||{};
+let playerStats=JSON.parse(localStorage.getItem('playerStats'))||{};
+let liveMatches=JSON.parse(localStorage.getItem('liveMatches'))||{};
 
 function save(){
 localStorage.setItem('teams',JSON.stringify(teams));
 localStorage.setItem('matches',JSON.stringify(matches));
 localStorage.setItem('stats',JSON.stringify(stats));
 localStorage.setItem('playerStats',JSON.stringify(playerStats));
-localStorage.setItem('roundStarts',JSON.stringify(roundStarts));
+localStorage.setItem('liveMatches',JSON.stringify(liveMatches));
 }
 
-// ================= TEAM MANAGEMENT =================
+/* TEAM */
 function addTeam(){
-let name=document.getElementById('teamName').value.trim();
-let captain=document.getElementById('captain').value;
-let phone=document.getElementById('phone').value;
-let payment=document.getElementById('payment').value;
-if(!name) return alert('Enter team name');
-if(teams.find(t=>t.name===name)) return alert('Team already exists');
-teams.push({name,captain,phone,payment});
-stats[name]=stats[name] || 0;
+let name=teamName.value.trim();
+if(!name)return;
+teams.push({name});
+stats[name]=0;
 save();renderTeams();renderLeaderboard();
-}
-
-function deleteTeam(i){
-if(!confirm('Delete this team?')) return;
-let name=teams[i].name;
-teams.splice(i,1);
-delete stats[name];
-save();renderTeams();renderLeaderboard();
-}
-
-function togglePayment(i){
-teams[i].payment=teams[i].payment==='Paid'?'Pending':'Paid';
-save();renderTeams();
 }
 
 function renderTeams(){
-let html='';
-teams.forEach((t,i)=>{
-let badge=t.payment==='Paid'?'<span class="badge-paid">PAID</span>':'<span class="badge-pending">PENDING</span>';
-html+=`<tr>
+teamTable.innerHTML=teams.map((t,i)=>`
+<tr>
 <td>${t.name}</td>
-<td>${t.captain}</td>
-<td>${t.phone}</td>
-<td>${badge}</td>
-<td>
-<button onclick="togglePayment(${i})">Payment</button>
-<button class="delete-btn" onclick="deleteTeam(${i})">Delete</button>
-</td>
-</tr>`;
-});
-document.getElementById('teamTable').innerHTML=html;
+<td><button onclick="deleteTeam(${i})">Delete</button></td>
+</tr>`).join('');
 }
 
-// ================= BRACKET GENERATION =================
+function deleteTeam(i){
+teams.splice(i,1);
+save();renderTeams();
+}
+
+/* BRACKET */
 function generateBracket(){
-if(teams.length<2) return alert('Need at least 2 teams');
-
 matches=[];
-roundStarts=[];
-
-let currentTeams=teams.map(t=>t.name);
+let current=teams.map(t=>t.name);
 let round=1;
 
-while(currentTeams.length>1){
-roundStarts.push(matches.length);
-let nextRound=[];
-for(let i=0;i<currentTeams.length;i+=2){
-let teamA=currentTeams[i];
-let teamB=currentTeams[i+1] || 'BYE';
-matches.push({round:'Round '+round,teamA,teamB,scoreA:'',scoreB:'',winner:''});
-nextRound.push('TBD');
+while(current.length>1){
+let next=[];
+for(let i=0;i<current.length;i+=2){
+let a=current[i];
+let b=current[i+1]||"BYE";
+matches.push({round:'R'+round,teamA:a,teamB:b,winner:''});
+next.push("TBD");
 }
-currentTeams=nextRound;
-round++;
+current=next;round++;
 }
-
-save();
-renderMatches();
-updateNextMatch();
+save();renderMatches();loadLiveMatchOptions();
 }
 
-// ================= MATCH PROGRESSION =================
-function setWinner(index,team){
-if(!team || team==='BYE') return;
-matches[index].winner=team;
-stats[team]++;
-advanceTeam(index,team);
-save();
-renderMatches();
-updateNextMatch();
-renderLeaderboard();
-}
-
-function advanceTeam(index,team){
-for(let r=0;r<roundStarts.length-1;r++){
-let start=roundStarts[r];
-let nextStart=roundStarts[r+1];
-if(index>=start && index<nextStart){
-let pos=index-start;
-let nextMatchIndex=nextStart+Math.floor(pos/2);
-if(pos%2===0) matches[nextMatchIndex].teamA=team;
-else matches[nextMatchIndex].teamB=team;
-break;
-}
-}
-}
-
-// ================= SCORE =================
-function updateScore(i,type,value){
-matches[i][type]=value;
-save();
-}
-
-// ================= PLAYER PERFORMANCE =================
-function addPlayerPerformance(){
-let name=document.getElementById('playerName').value.trim();
-let team=document.getElementById('playerTeam').value.trim();
-let runs=parseInt(document.getElementById('runs').value)||0;
-let wickets=parseInt(document.getElementById('wickets').value)||0;
-let mom=document.getElementById('mom').value==='yes'?1:0;
-
-if(!name || !team) return alert('Enter player and team');
-
-if(!playerStats[name]){
-playerStats[name]={team,runs:0,wickets:0,mom:0};
-}
-
-playerStats[name].runs+=runs;
-playerStats[name].wickets+=wickets;
-playerStats[name].mom+=mom;
-
-save();
-renderPlayerStats();
-renderAwards();
-}
-
-function renderPlayerStats(){
-let html='';
-Object.entries(playerStats).forEach(([name,p])=>{
-html+=`<tr>
-<td>${name}</td>
-<td>${p.team}</td>
-<td>${p.runs}</td>
-<td>${p.wickets}</td>
-<td>${p.mom}</td>
-</tr>`;
-});
-document.getElementById('playerStatsTable').innerHTML=html;
-}
-
-function renderAwards(){
-let players=Object.entries(playerStats);
-if(players.length===0) return;
-
-let bestBatsman=players.reduce((a,b)=>a[1].runs>b[1].runs?a:b);
-let bestBowler=players.reduce((a,b)=>a[1].wickets>b[1].wickets?a:b);
-let mostMOM=players.reduce((a,b)=>a[1].mom>b[1].mom?a:b);
-
-document.getElementById('bestBatsman').innerText='Best Batsman: '+bestBatsman[0]+' ('+bestBatsman[1].runs+' runs)';
-document.getElementById('bestBowler').innerText='Best Bowler: '+bestBowler[0]+' ('+bestBowler[1].wickets+' wickets)';
-document.getElementById('mostMOM').innerText='Most Man of the Match: '+mostMOM[0]+' ('+mostMOM[1].mom+')';
-}
-
-// ================= RENDER MATCHES =================
+/* MATCH RENDER */
 function renderMatches(){
-let html='';
-matches.forEach((m,i)=>{
-html+=`<tr>
+matchTable.innerHTML=matches.map((m,i)=>`
+<tr>
 <td>${m.round}</td>
 <td>${m.teamA}</td>
 <td>${m.teamB}</td>
-<td><input value="${m.scoreA}" onchange="updateScore(${i},'scoreA',this.value)"></td>
-<td><input value="${m.scoreB}" onchange="updateScore(${i},'scoreB',this.value)"></td>
-<td class="winner">${m.winner||'-'}</td>
+<td></td><td></td>
+<td>${m.winner||'-'}</td>
 <td>
 <button onclick="setWinner(${i},'${m.teamA}')">${m.teamA}</button>
 <button onclick="setWinner(${i},'${m.teamB}')">${m.teamB}</button>
 </td>
-</tr>`;
-});
-document.getElementById('matchTable').innerHTML=html;
+</tr>`).join('');
 }
 
-// ================= NEXT MATCH =================
-function updateNextMatch(){
-let next=matches.find(m=>!m.winner && m.teamA!=='TBD');
-document.getElementById('nextMatch').innerText=next? next.teamA+' vs '+next.teamB : 'Tournament Completed';
+/* LIVE SCORING */
+function loadLiveMatchOptions(){
+liveMatchSelect.innerHTML='<option value="">Select Match</option>'+
+matches.map((m,i)=>`<option value="${i}">${m.teamA} vs ${m.teamB}</option>`).join('');
 }
 
-// ================= LEADERBOARD =================
+function getMatch(){
+let i=liveMatchSelect.value;
+if(i==="")return null;
+if(!liveMatches[i])liveMatches[i]={batsmen:{},bowler:null};
+return liveMatches[i];
+}
+
+function ensurePlayers(){
+let m=getMatch(); if(!m)return alert("Select match");
+let s=striker.value.trim();
+let b=bowler.value.trim();
+if(!s||!b)return alert("Enter striker & bowler");
+if(!m.batsmen[s])m.batsmen[s]={runs:0,balls:0,fours:0,sixes:0};
+if(!m.bowler||m.bowler.name!==b)
+m.bowler={name:b,balls:0,runs:0,wickets:0};
+return m;
+}
+
+function addRun(r){
+let m=ensurePlayers(); if(!m)return;
+let s=striker.value.trim();
+let p=m.batsmen[s];
+p.runs+=r; p.balls++;
+if(r==4)p.fours++;
+if(r==6)p.sixes++;
+m.bowler.balls++;
+m.bowler.runs+=r;
+save();renderLive();
+}
+
+function addWicket(){
+let m=ensurePlayers(); if(!m)return;
+let s=striker.value.trim();
+m.batsmen[s].balls++;
+m.bowler.balls++;
+m.bowler.wickets++;
+save();renderLive();
+}
+
+function renderLive(){
+let m=getMatch(); if(!m)return;
+liveBatsmen.innerHTML=Object.entries(m.batsmen)
+.map(([n,p])=>`${n} ${p.runs}(${p.balls}) 4s:${p.fours} 6s:${p.sixes}`).join("<br>");
+let b=m.bowler;
+if(!b)return;
+liveBowler.innerHTML=
+`${b.name} Overs:${(b.balls/6).toFixed(1)} Runs:${b.runs} Wkts:${b.wickets}`;
+}
+
+liveMatchSelect.onchange=renderLive;
+
+/* LEADERBOARD */
 function renderLeaderboard(){
-let sorted=Object.entries(stats).sort((a,b)=>b[1]-a[1]);
-let html='';
-sorted.forEach(([team,wins])=>{
-html+=`<tr><td>${team}</td><td>${wins}</td></tr>`;
-});
-document.getElementById('leaderboard').innerHTML=html;
+leaderboard.innerHTML=Object.entries(stats)
+.map(([t,w])=>`<tr><td>${t}</td><td>${w}</td></tr>`).join('');
 }
 
 renderTeams();
 renderMatches();
-updateNextMatch();
-renderLeaderboard();
-renderPlayerStats();
-renderAwards();
-</script></body>
+loadLiveMatchOptions();
+
+</script>
+</body>
 </html>
