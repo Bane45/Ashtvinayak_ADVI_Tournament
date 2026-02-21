@@ -2,216 +2,117 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Cricket Tournament Manager</title>
+<title>Knockout Cricket Tournament</title>
 
 <style>
-body{
-font-family:Segoe UI;
-margin:0;
-background:#eef2f7;
-}
-
-header{
-background:#0d6efd;
-color:white;
-padding:15px;
-text-align:center;
-font-size:24px;
-font-weight:bold;
-}
-
-nav{
-display:flex;
-background:white;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-nav button{
-flex:1;
-padding:12px;
-border:none;
-background:white;
-font-size:16px;
-cursor:pointer;
-}
-
-nav button:hover{
-background:#e9ecef;
-}
-
-.container{
-padding:20px;
-max-width:1100px;
-margin:auto;
-}
-
-.card{
-background:white;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-
-h2{margin-top:0}
-
-input,select{
-width:100%;
-padding:8px;
-margin:6px 0;
-}
-
-button.action{
-background:#0d6efd;
-color:white;
-border:none;
-padding:10px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.score-btn{
-padding:15px;
-margin:4px;
-font-size:18px;
-width:60px;
-}
-
-.big-score{
-font-size:28px;
-font-weight:bold;
-color:#0d6efd;
-}
-
+body{font-family:Segoe UI;margin:0;background:#eef2f7}
+header{background:#0d6efd;color:white;padding:15px;text-align:center;font-size:22px;font-weight:bold}
+nav{display:flex;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+nav button{flex:1;padding:12px;border:none;background:white;font-size:16px;cursor:pointer}
+nav button:hover{background:#e9ecef}
+.container{max-width:1100px;margin:auto;padding:20px}
+.card{background:white;padding:20px;margin-bottom:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
 .hidden{display:none}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-border:1px solid #ddd;
-padding:8px;
-text-align:center;
-}
+.score{font-size:32px;font-weight:bold;color:#0d6efd}
+.score-btn{padding:14px;margin:4px;font-size:18px;width:60px}
+input,select{width:100%;padding:8px;margin:6px 0}
+button.primary{background:#0d6efd;color:white;border:none;padding:10px;border-radius:6px;cursor:pointer}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
 </style>
 </head>
 
 <body>
 
-<header>Cricket Tournament Pro Manager</header>
+<header>Knockout Cricket Tournament</header>
 
 <nav>
-<button onclick="showPage('teams')">Team Registration</button>
-<button onclick="showPage('match')">Match Setup</button>
-<button onclick="showPage('live')">Live Scorecard</button>
-<button onclick="showPage('points')">Points Table</button>
+<button onclick="page('teams')">Teams</button>
+<button onclick="page('setup')">Match Setup</button>
+<button onclick="page('live')">Live Match</button>
+<button onclick="page('points')">Points</button>
 </nav>
 
 <div class="container">
 
-<!-- ================= TEAM REGISTRATION ================= -->
-<div id="teamsPage" class="card">
-<h2>Register Team</h2>
-<input id="teamName" placeholder="Team name">
-<button class="action" onclick="addTeam()">Add Team</button>
-
-<h3>Teams</h3>
+<!-- TEAM PAGE -->
+<div id="teams" class="card">
+<h2>Register Teams</h2>
+<input id="teamInput" placeholder="Team name">
+<button class="primary" onclick="addTeam()">Add Team</button>
+<button class="primary" onclick="generateKnockout()">Generate Knockout</button>
 <ul id="teamList"></ul>
 </div>
 
-
-<!-- ================= MATCH SETUP ================= -->
-<div id="matchPage" class="card hidden">
+<!-- MATCH SETUP -->
+<div id="setup" class="card hidden">
 <h2>Match Setup</h2>
 
-<label>Batting Team</label>
-<select id="battingTeam"></select>
-
-<label>Bowling Team</label>
-<select id="bowlingTeam"></select>
-
 <label>Striker</label>
-<input id="striker">
+<input id="s1">
 
 <label>Non Striker</label>
-<input id="nonStriker">
+<input id="s2">
 
 <label>Opening Bowler</label>
 <input id="bowler">
 
-<button class="action" onclick="startMatch()">Start Match</button>
+<button class="primary" onclick="startMatch()">Start Match</button>
 
 <h3 id="matchInfo"></h3>
 </div>
 
+<!-- LIVE MATCH -->
+<div id="live" class="card hidden">
 
-<!-- ================= LIVE SCORE ================= -->
-<div id="livePage" class="card hidden">
+<h2 id="roundTitle"></h2>
+<h3 id="inningsTitle"></h3>
+<div class="score" id="score">0/0 (0.0)</div>
+<div id="target"></div>
+<p id="players"></p>
 
-<h2>Live Scorecard</h2>
-
-<div class="big-score" id="scoreDisplay">0/0 (0.0)</div>
-
-<p id="playersDisplay"></p>
-
-<h3>Runs</h3>
-
-<button class="score-btn" onclick="run(0)">0</button>
-<button class="score-btn" onclick="run(1)">1</button>
-<button class="score-btn" onclick="run(2)">2</button>
-<button class="score-btn" onclick="run(3)">3</button>
-<button class="score-btn" onclick="run(4)">4</button>
-<button class="score-btn" onclick="run(6)">6</button>
+<button class="score-btn" onclick="ball(0)">0</button>
+<button class="score-btn" onclick="ball(1)">1</button>
+<button class="score-btn" onclick="ball(2)">2</button>
+<button class="score-btn" onclick="ball(3)">3</button>
+<button class="score-btn" onclick="ball(4)">4</button>
+<button class="score-btn" onclick="ball(6)">6</button>
 <button class="score-btn" onclick="wicket()">W</button>
 
 <br><br>
 
-<button class="action" onclick="endOver()">End Over</button>
-
-<h3>Match Awards</h3>
-<input id="mom" placeholder="Man of the match">
-<button class="action" onclick="finishMatch()">Finish Match</button>
+<button class="primary" onclick="changeBowler()">Change Bowler</button>
+<button class="primary" onclick="endOver()">End Over</button>
+<button class="primary" onclick="endInnings()">End Innings</button>
 
 </div>
 
-
-<!-- ================= POINTS ================= -->
-<div id="pointsPage" class="card hidden">
-
+<!-- POINTS -->
+<div id="points" class="card hidden">
 <h2>Points Table</h2>
-
 <table>
-<thead>
-<tr>
-<th>Team</th>
-<th>Wins</th>
-</tr>
-</thead>
+<thead><tr><th>Team</th><th>Wins</th></tr></thead>
 <tbody id="pointsTable"></tbody>
 </table>
-
-<h3 id="bestBatsman"></h3>
-<h3 id="bestBowler"></h3>
-
+<h2 id="winnerText"></h2>
 </div>
 
 </div>
-
 
 <script>
 
+function page(p){
+["teams","setup","live","points"].forEach(x=>document.getElementById(x).classList.add("hidden"))
+document.getElementById(p).classList.remove("hidden")
+}
+
 let teams=[]
 let points={}
-let totalRuns=0
-let wickets=0
-let balls=0
-let overs=0
-let strikerRuns=0
-let strikerBalls=0
-let fours=0
-let sixes=0
+let knockoutMatches=[]
+let currentMatch=0
+
+let innings=1
+let target=0
 
 let match={
 batting:"",
@@ -221,124 +122,195 @@ nonStriker:"",
 bowler:""
 }
 
-function showPage(p){
-document.getElementById("teamsPage").classList.add("hidden")
-document.getElementById("matchPage").classList.add("hidden")
-document.getElementById("livePage").classList.add("hidden")
-document.getElementById("pointsPage").classList.add("hidden")
-
-if(p=="teams") document.getElementById("teamsPage").classList.remove("hidden")
-if(p=="match") document.getElementById("matchPage").classList.remove("hidden")
-if(p=="live") document.getElementById("livePage").classList.remove("hidden")
-if(p=="points") document.getElementById("pointsPage").classList.remove("hidden")
-}
-
+let score=0
+let wickets=0
+let balls=0
+let overs=0
 
 function addTeam(){
-let name=document.getElementById("teamName").value
-if(!name) return
-teams.push(name)
-points[name]=points[name]||0
+let t=teamInput.value.trim()
+if(!t) return
+teams.push(t)
+points[t]=points[t]||0
 renderTeams()
-loadMatchTeams()
 }
 
 function renderTeams(){
-let html=""
-teams.forEach(t=> html+="<li>"+t+"</li>")
-document.getElementById("teamList").innerHTML=html
+teamList.innerHTML=teams.map(t=>"<li>"+t+"</li>").join("")
 }
 
-function loadMatchTeams(){
-let b=document.getElementById("battingTeam")
-let bw=document.getElementById("bowlingTeam")
-b.innerHTML=""
-bw.innerHTML=""
-teams.forEach(t=>{
-b.innerHTML+=`<option>${t}</option>`
-bw.innerHTML+=`<option>${t}</option>`
-})
+function generateKnockout(){
+
+if(teams.length<2){alert("Need teams");return}
+
+knockoutMatches=[]
+let roundTeams=[...teams]
+
+while(roundTeams.length>1){
+
+let roundName =
+roundTeams.length==2?"FINAL":
+roundTeams.length<=4?"SEMI FINAL":
+roundTeams.length<=8?"QUARTER FINAL":"ROUND"
+
+let next=[]
+
+for(let i=0;i<roundTeams.length;i+=2){
+let A=roundTeams[i]
+let B=roundTeams[i+1]||"BYE"
+knockoutMatches.push({round:roundName,teamA:A,teamB:B,winner:""})
+next.push("TBD")
 }
 
+roundTeams=next
+}
+
+currentMatch=0
+showNextMatch()
+page("setup")
+}
+
+function showNextMatch(){
+
+let m=knockoutMatches[currentMatch]
+
+match.batting=m.teamA
+match.bowling=m.teamB
+
+roundTitle.innerText=m.round+" : "+m.teamA+" vs "+m.teamB
+matchInfo.innerText=m.teamA+" vs "+m.teamB
+}
 
 function startMatch(){
-match.batting=document.getElementById("battingTeam").value
-match.bowling=document.getElementById("bowlingTeam").value
-match.striker=document.getElementById("striker").value
-match.nonStriker=document.getElementById("nonStriker").value
-match.bowler=document.getElementById("bowler").value
 
-document.getElementById("matchInfo").innerText=
-match.batting+" batting vs "+match.bowling
+match.striker=s1.value
+match.nonStriker=s2.value
+match.bowler=bowler.value
 
-updateDisplay()
-showPage("live")
+resetScore()
+updateUI()
+page("live")
 }
 
+function resetScore(){
+score=0
+wickets=0
+balls=0
+overs=0
+}
 
-function run(r){
-totalRuns+=r
-strikerRuns+=r
-strikerBalls++
+function ball(r){
+score+=r
 balls++
-
-if(r==4) fours++
-if(r==6) sixes++
-
+if(r%2==1) swapStrike()
 if(balls==6) endOver()
-
-updateDisplay()
+checkChase()
+updateUI()
 }
 
 function wicket(){
 wickets++
 balls++
-strikerBalls++
-updateDisplay()
+match.striker=prompt("New batsman")
+updateUI()
+}
+
+function swapStrike(){
+let t=match.striker
+match.striker=match.nonStriker
+match.nonStriker=t
 }
 
 function endOver(){
 overs++
 balls=0
-alert("Over completed")
-updateDisplay()
+swapStrike()
+changeBowler()
+updateUI()
 }
 
-function updateDisplay(){
-document.getElementById("scoreDisplay").innerText=
-totalRuns+"/"+wickets+" ("+overs+"."+balls+")"
-
-document.getElementById("playersDisplay").innerText=
-"Striker: "+match.striker+" "+strikerRuns+"("+strikerBalls+") | Bowler: "+match.bowler
+function changeBowler(){
+match.bowler=prompt("New bowler")
 }
 
+function endInnings(){
+
+if(innings==1){
+target=score+1
+innings=2
+
+let temp=match.batting
+match.batting=match.bowling
+match.bowling=temp
+
+match.striker=prompt("New striker")
+match.nonStriker=prompt("New non striker")
+match.bowler=prompt("New bowler")
+
+resetScore()
+updateUI()
+return
+}
+
+finishMatch()
+}
+
+function checkChase(){
+if(innings==2 && score>=target) finishMatch()
+}
 
 function finishMatch(){
 
-let winner=prompt("Winner team name")
+let winner = score>=target ? match.batting : match.bowling
+
 points[winner]++
+knockoutMatches[currentMatch].winner=winner
 
 renderPoints()
 
-document.getElementById("bestBatsman").innerText=
-"Best Batsman: "+match.striker+" "+strikerRuns+" runs"
+alert("Winner: "+winner)
 
-document.getElementById("bestBowler").innerText=
-"Best Bowler: "+match.bowler
-
-showPage("points")
+advanceKnockout(winner)
+page("points")
 }
 
+function advanceKnockout(winner){
+
+for(let i=currentMatch+1;i<knockoutMatches.length;i++){
+if(knockoutMatches[i].teamA=="TBD"){knockoutMatches[i].teamA=winner;break}
+if(knockoutMatches[i].teamB=="TBD"){knockoutMatches[i].teamB=winner;break}
+}
+
+currentMatch++
+
+if(currentMatch>=knockoutMatches.length){
+winnerText.innerText="🏆 Champion: "+winner
+}else{
+alert("Next Match Ready")
+innings=1
+showNextMatch()
+}
+}
 
 function renderPoints(){
-let html=""
-Object.entries(points).forEach(([t,w])=>{
-html+=`<tr><td>${t}</td><td>${w}</td></tr>`
-})
-document.getElementById("pointsTable").innerHTML=html
+pointsTable.innerHTML=
+Object.entries(points).map(([t,w])=>`<tr><td>${t}</td><td>${w}</td></tr>`).join("")
+}
+
+function updateUI(){
+
+inningsTitle.innerText="INNINGS "+innings+" | "+match.batting+" batting"
+
+score.innerText=score+"/"+wickets+" ("+overs+"."+balls+")"
+
+players.innerText=
+"Striker: "+match.striker+
+" | Non striker: "+match.nonStriker+
+" | Bowler: "+match.bowler
+
+target.innerText=innings==2?"Target: "+target:""
 }
 
 </script>
-
 </body>
 </html>
